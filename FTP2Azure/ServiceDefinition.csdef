@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="FTP2Azure" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2012-05.1.7">
+  <WorkerRole name="FTPServerRole">
+    <Endpoints>
+      <InputEndpoint name="FTP" port="21" protocol="tcp" />
+      <InputEndpoint name="FTPPASV" protocol="tcp" port="59860" />
+    </Endpoints>
+    <ConfigurationSettings>
+      <Setting name="StorageAccount" />
+      <Setting name="Mode" />
+      <Setting name="ConnectionEncoding" />
+      <Setting name="FtpAccount" />
+      <Setting name="MaxClients" />
+      <Setting name="FtpServerHost" />
+      <Setting name="QueueNotification" />
+      <Setting name="MaxIdleSeconds" />
+    </ConfigurationSettings>
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+  </WorkerRole>
+</ServiceDefinition>
