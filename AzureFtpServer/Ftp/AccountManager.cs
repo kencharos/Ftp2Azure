@@ -76,7 +76,7 @@ namespace AzureFtpServer.Ftp
 
                 if (separatoridx < 0)
                 {
-                    Trace.WriteLine(string.Format("Invalid <username, password> pair ({0}) in cscfg.", oneAccount), "Warnning");
+                    Console.WriteLine("Warning: Invalid <username, password> pair ({0}) in cscfg.", oneAccount);
                     continue;
                 }
 
@@ -86,7 +86,7 @@ namespace AzureFtpServer.Ftp
                 // check the username whether conform to the naming rules
                 if (!CheckUsername(username))
                 {
-                    Trace.WriteLine(string.Format("Invalid <username, password> pair ({0}) in cscfg.", oneAccount), "Warnning");
+                    Console.WriteLine("Warning: Invalid <username, password> pair ({0}) in cscfg.", oneAccount);
                     continue;
                 }
 
@@ -104,7 +104,7 @@ namespace AzureFtpServer.Ftp
                 _usernum++;
             }
 
-            Trace.WriteLine(string.Format("Load {0} accounts.", _usernum), "Information");
+            Console.WriteLine("Information: Load {0} accounts.", _usernum);
 
             return _usernum;
         }

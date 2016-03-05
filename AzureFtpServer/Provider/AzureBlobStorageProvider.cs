@@ -83,7 +83,7 @@ namespace AzureFtpServer.Provider
             }
             catch (StorageException)
             {
-                Trace.WriteLine(string.Format("Create new container: {0}", ContainerName), "Information");
+                Console.WriteLine("Information: Create new container: {0}", ContainerName);
                 _container.Create();
 
                 // set new container's permissions
@@ -176,7 +176,7 @@ namespace AzureFtpServer.Provider
             }
             else
             {
-                Trace.WriteLine(string.Format("Get blob reference \"{0}\" failed", path), "Error");
+                Console.WriteLine("Error: Get blob reference \"{0}\" failed", path);
                 return false;
             }
             return true;
@@ -294,7 +294,7 @@ namespace AzureFtpServer.Provider
             }
             catch (StorageException)
             {
-                Trace.WriteLine(string.Format("Get blob {0} failed", path), "Error");
+                Console.WriteLine("Error: Get blob {0} failed", path);
                 return null;
             }
 
@@ -427,7 +427,7 @@ namespace AzureFtpServer.Provider
             // error check
             if (!path.EndsWith(@"/"))
             {
-                Trace.WriteLine(string.Format("Invalid parameter {0} for function IsValidDirectory", path), "Error");
+                Console.WriteLine("Error: Invalid parameter {0} for function IsValidDirectory", path);
                 return false;
             }
 
@@ -462,7 +462,7 @@ namespace AzureFtpServer.Provider
             // error check
             if (path.EndsWith(@"/"))
             {
-                Trace.WriteLine(string.Format("Invalid parameter {0} for function IsValidFile", path), "Error");
+                Console.WriteLine("Error: Invalid parameter {0} for function IsValidFile", path);
                 return false;
             }
 
@@ -659,7 +659,7 @@ namespace AzureFtpServer.Provider
 
             blob.FetchAttributes();
 
-            Trace.WriteLine("GetMd5#" + blob.Properties.ContentMD5);
+            Console.WriteLine("GetMd5#" + blob.Properties.ContentMD5);
         }
 
         private void rootFix(ref CloudBlobContainer container, ref string blobPath)
