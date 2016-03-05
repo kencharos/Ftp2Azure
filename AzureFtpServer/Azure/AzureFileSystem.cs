@@ -73,8 +73,18 @@ namespace AzureFtpServer.Azure
         /// <returns>an arry of directorynames</returns>
         public string[] GetDirectories(string sDirPath)
         {
-            IEnumerable<CloudBlobDirectory> directories = _provider.GetDirectoryListing(sDirPath);
-            string[] result =  directories.Select(r => r.Uri.AbsolutePath.ToString()).ToArray().ToFtpPath(sDirPath);
+            string[] result;
+
+            if (_containerName + sDirPath == "$root/")
+                result = _provider.GetContainerListing()
+                    .Select(r => r.Uri.AbsolutePath.ToString())
+                    .Where(s => s != "/$root").Select(s => "/$root" + s + "/")
+                    .ToArray();
+            else
+                result = _provider.GetDirectoryListing(sDirPath)
+                    .Select(r => r.Uri.AbsolutePath.ToString())
+                    .ToArray().ToFtpPath(sDirPath);
+
             return result;
         }
 
