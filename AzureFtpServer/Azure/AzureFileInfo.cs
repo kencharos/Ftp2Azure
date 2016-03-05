@@ -1,7 +1,7 @@
-﻿using System;
-using System.Text;
-using AzureFtpServer.Ftp.FileSystem;
+﻿using AzureFtpServer.Ftp.FileSystem;
 using AzureFtpServer.Provider;
+using System;
+using System.Text;
 
 namespace AzureFtpServer.Azure
 {
@@ -13,7 +13,7 @@ namespace AzureFtpServer.Azure
         {
             _file = file;
         }
-        
+
         #region Implementation of IFileInfo 
 
         public bool FileObjectExists()

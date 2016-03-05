@@ -1,6 +1,6 @@
+using AzureFtpServer.General;
 using System.Net.Sockets;
 using System.Text;
-using AzureFtpServer.General;
 
 namespace AzureFtpServer.Ftp
 {
@@ -19,7 +19,7 @@ namespace AzureFtpServer.Ftp
         }
 
         public TcpClient Socket
-        { 
+        {
             get { return m_theSocket; }
         }
 
@@ -32,7 +32,7 @@ namespace AzureFtpServer.Ftp
         {
             if (m_theSocket != null)
                 SocketHelpers.Close(m_theSocket);
-            
+
             m_theSocket = null;
         }
 

@@ -19,7 +19,7 @@ namespace AzureFtpServer.FtpCommands
         protected override string OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
-            
+
             if (sMessage == "")
             {
                 return GetMessage(211, "Server status: OK");
@@ -84,7 +84,7 @@ namespace AzureFtpServer.FtpCommands
             SocketHelpers.Send(ConnectionObject.Socket, string.Format("213-Begin STAT \"{0}\":\r\n", sMessage), ConnectionObject.Encoding);
 
             SocketHelpers.Send(ConnectionObject.Socket, sFileList, ConnectionObject.Encoding);
-            
+
             return GetMessage(213, string.Format("{0} successful.", Command));
         }
 

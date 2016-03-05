@@ -43,14 +43,14 @@ namespace AzureFtpServer.Azure
         public IFileInfo GetFileInfo(string sPath)
         {
             AzureCloudFile file = _provider.GetBlobInfo(sPath, false);
-            
+
             return new AzureFileInfo(file);
         }
 
         public IFileInfo GetDirectoryInfo(string sDirPath)
         {
             AzureCloudFile dir = _provider.GetBlobInfo(sDirPath, true);
-            
+
             return new AzureFileInfo(dir);
         }
 

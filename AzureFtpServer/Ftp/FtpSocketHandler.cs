@@ -1,11 +1,11 @@
-using System;
-using System.IO;
-using System.Net.Sockets;
-using System.Threading;
-using System.Diagnostics;
 using AzureFtpServer.Ftp.FileSystem;
 using AzureFtpServer.General;
 using AzureFtpServer.Provider;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace AzureFtpServer.Ftp
 {
@@ -117,7 +117,7 @@ namespace AzureFtpServer.Ftp
                 DateTime currentTime = DateTime.Now;
                 TimeSpan timeSpan = currentTime - m_lastActiveTime;
                 // has been idle for a long time
-                if ((timeSpan.TotalSeconds > m_maxIdleSeconds) && !m_theCommands.DataSocketOpen) 
+                if ((timeSpan.TotalSeconds > m_maxIdleSeconds) && !m_theCommands.DataSocketOpen)
                 {
                     SocketHelpers.Send(m_theSocket, string.Format("426 No operations for {0}+ seconds. Bye!", m_maxIdleSeconds), m_theCommands.Encoding);
                     FtpServerMessageHandler.SendMessage(m_nId, "Connection closed for too long idle time.");

@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using AzureFtpServer.Ftp;
 using AzureFtpServer.General;
+using System.Diagnostics;
 
 namespace AzureFtpServer.FtpCommands
 {
@@ -92,7 +92,7 @@ namespace AzureFtpServer.FtpCommands
         protected string GetParentDir()
         {
             string current = m_theConnectionObject.CurrentDirectory;
-            
+
             // current is root dir
             if (current == @"/")
                 return null;

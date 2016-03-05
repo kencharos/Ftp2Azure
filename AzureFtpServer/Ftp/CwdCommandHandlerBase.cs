@@ -1,6 +1,6 @@
-using System.IO;
 using AzureFtpServer.Ftp;
 using AzureFtpServer.Ftp.General;
+using System.IO;
 
 namespace AzureFtpServer.FtpCommands
 {
@@ -35,7 +35,7 @@ namespace AzureFtpServer.FtpCommands
                 return GetMessage(200, string.Format("{0} Successful ({1})", Command, parentDir));
             }
             #endregion
-            
+
             if (!FileNameHelpers.IsValid(sMessageFull))
             {
                 return GetMessage(550, string.Format("\"{0}\" is not a valid directory string.", sMessage));

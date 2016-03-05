@@ -1,8 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using AzureFtpServer.Provider;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
-using AzureFtpServer.Provider;
 
 namespace AzureFtpServer.Ftp
 {
@@ -17,7 +17,7 @@ namespace AzureFtpServer.Ftp
         private const char separator = ':';
         private Dictionary<string, string> _accounts;
         private int _usernum;
-        
+
         #endregion
 
         #region Construction
@@ -31,8 +31,8 @@ namespace AzureFtpServer.Ftp
         #endregion
 
         #region Properties
-        
-        public int UserNum 
+
+        public int UserNum
         {
             get { return _usernum; }
         }
@@ -52,7 +52,7 @@ namespace AzureFtpServer.Ftp
             _accounts.Clear();
 
             //int idx = 1; // use idx to concat the setting name
-            
+
             //bool hasNext = true; // bool value, need find the next setting
             // Get the account setting
             string accountInfo = StorageProviderConfiguration.FtpAccount;
@@ -105,7 +105,7 @@ namespace AzureFtpServer.Ftp
             }
 
             Trace.WriteLine(string.Format("Load {0} accounts.", _usernum), "Information");
-            
+
             return _usernum;
         }
 

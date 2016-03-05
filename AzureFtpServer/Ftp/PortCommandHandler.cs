@@ -15,7 +15,7 @@ namespace AzureFtpServer.FtpCommands
 
         protected override string OnProcess(string sMessage)
         {
-            string[] asData = sMessage.Split(new[] {','});
+            string[] asData = sMessage.Split(new[] { ',' });
 
             if (asData.Length != 6)
             {
@@ -24,7 +24,7 @@ namespace AzureFtpServer.FtpCommands
 
             ConnectionObject.DataConnectionType = DataConnectionType.Active;
 
-            int nSocketPort = int.Parse(asData[4])*256 + int.Parse(asData[5]);
+            int nSocketPort = int.Parse(asData[4]) * 256 + int.Parse(asData[5]);
 
             ConnectionObject.PortCommandSocketPort = nSocketPort;
             ConnectionObject.PortCommandSocketAddress = string.Join(".", asData, 0, 4);

@@ -1,7 +1,6 @@
-﻿using System;
+﻿using AzureFtpServer.Ftp.FileSystem;
+using System;
 using System.IO;
-using AzureFtpServer.Ftp.FileSystem;
-
 
 namespace AzureFtpServer.Azure
 {

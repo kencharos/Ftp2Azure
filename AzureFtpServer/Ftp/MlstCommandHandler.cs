@@ -1,7 +1,7 @@
-﻿using System.Text;
-using AzureFtpServer.General;
-using AzureFtpServer.Ftp;
+﻿using AzureFtpServer.Ftp;
 using AzureFtpServer.Ftp.General;
+using AzureFtpServer.General;
+using System.Text;
 
 namespace AzureFtpServer.FtpCommands
 {
@@ -13,7 +13,7 @@ namespace AzureFtpServer.FtpCommands
     {
         public MlstCommandHandler(FtpConnectionObject connectionObject)
             : base("MLST", connectionObject)
-        { 
+        {
         }
 
         protected override string OnProcess(string sMessage)
@@ -46,7 +46,7 @@ namespace AzureFtpServer.FtpCommands
                 response.Append(GenerateEntry(fileInfo));
                 response.Append("\r\n");
             }
-            
+
             if (targetIsDir)
             {
                 response.Append(" ");

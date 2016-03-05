@@ -1,9 +1,9 @@
-using System;
-using System.Text;
 using AzureFtpServer.Ftp;
 using AzureFtpServer.Ftp.FileSystem;
 using AzureFtpServer.Ftp.General;
 using AzureFtpServer.General;
+using System;
+using System.Text;
 
 namespace AzureFtpServer.FtpCommands
 {
@@ -67,7 +67,7 @@ namespace AzureFtpServer.FtpCommands
                 asFiles = ConnectionObject.FileSystemObject.GetFiles(targetToList);
                 asDirectories = ConnectionObject.FileSystemObject.GetDirectories(targetToList);
             }
-            else 
+            else
             {
                 return GetMessage(550, string.Format("\"{0}\" not exists", sMessage));
             }
@@ -114,7 +114,7 @@ namespace AzureFtpServer.FtpCommands
                     stringBuilder.Append(string.Format("{0}\r\n", FileNameHelpers.GetDirectoryName(dirPath)));
                 }
             }
-            
+
             return stringBuilder.ToString();
         }
 
@@ -182,7 +182,7 @@ namespace AzureFtpServer.FtpCommands
             {
                 stringBuilder.Append(" " + fileDate.Year);
             }
-            else 
+            else
             {
                 stringBuilder.Append(string.Format("{0:hh}:{1:mm}", fileDate, fileDate));
             }

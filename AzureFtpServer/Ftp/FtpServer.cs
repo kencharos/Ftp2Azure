@@ -70,13 +70,13 @@ namespace AzureFtpServer.Ftp
         {
             // initialise the encoding of the control channel
             InitialiseConnectionEncoding();
-            
+
             // initialise the max number of clients
             InitialiseMaxClients();
 
             m_theThread = new Thread(ThreadRun);
             m_theThread.Start();
-            m_started= true;
+            m_started = true;
         }
 
         public void Stop()
@@ -190,19 +190,19 @@ namespace AzureFtpServer.Ftp
             string maxClients = ConfigurationManager.AppSettings["MaxClients"];
 
             int iMaxClients = 5;
-            
+
             try
             {
                 iMaxClients = Convert.ToInt32(maxClients);
             }
             catch (Exception)
-            { 
+            {
                 // if the "MaxClients" setting is invalid to convert into integer, use default value
                 Console.WriteLine("Warning: Invalid MaxClients setting: {0}", maxClients);
             }
 
             if (iMaxClients <= 0)
-            { 
+            {
                 // negtive or 0 is also invalid, use default value
                 iMaxClients = 5;
             }
@@ -224,9 +224,9 @@ namespace AzureFtpServer.Ftp
         private void InitialiseSocketHandler(TcpClient socket)
         {
             var handler = new FtpSocketHandler(m_fileSystemClassFactory, m_nId);
-            
+
             // get encoding for the socket connection
-            
+
             handler.Start(socket, m_encoding);
 
             m_apConnections.Add(handler);

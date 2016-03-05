@@ -11,9 +11,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace AzureFtpServer.Provider {
-
-    public class StorageProviderEventArgs : EventArgs {
+namespace AzureFtpServer.Provider
+{
+    public class StorageProviderEventArgs : EventArgs
+    {
         public StorageOperation Operation;
         public StorageOperationResult Result;
     }
@@ -59,7 +60,7 @@ namespace AzureFtpServer.Provider {
         {
             if (String.IsNullOrEmpty(containerName))
                 throw new ArgumentException("You must provide the base Container Name", "containerName");
-            
+
             ContainerName = containerName;
 
             if (StorageProviderConfiguration.Mode == Modes.Debug)
@@ -114,13 +115,13 @@ namespace AzureFtpServer.Provider {
         public Stream GetReadBlobStream(string path)
         {
             var blob = GetCloudBlob(path);
-            
+
             if (blob == null)
                 return null;
-            
+
             Stream stream = blob.OpenRead();
             stream.Position = 0;
-            
+
             return stream;
         }
 
@@ -160,7 +161,7 @@ namespace AzureFtpServer.Provider {
         {
             if (!IsValidFile(path))
                 return false;
-            
+
             // convert to azure path
             string blobPath = path.ToAzurePath();
 
@@ -293,7 +294,7 @@ namespace AzureFtpServer.Provider {
             }
             catch (StorageException)
             {
-                Trace.WriteLine(string.Format("Get blob {0} failed", path),"Error");
+                Trace.WriteLine(string.Format("Get blob {0} failed", path), "Error");
                 return null;
             }
 
@@ -335,7 +336,7 @@ namespace AzureFtpServer.Provider {
             string prefix = GetFullPath(path);
 
             IEnumerable<CloudBlob> results = _blobClient.ListBlobs(prefix).OfType<CloudBlob>();
-            
+
             return results;
         }
 
@@ -362,7 +363,7 @@ namespace AzureFtpServer.Provider {
             if (!IsValidFile(oldPath))
             {
                 throw new FileNotFoundException(
-                    "The path supplied does not exist on the storage provider",oldPath);
+                    "The path supplied does not exist on the storage provider", oldPath);
             }
 
             newBlob.StartCopy(oldBlob);
@@ -542,7 +543,7 @@ namespace AzureFtpServer.Provider {
                 }
             }
             catch (StorageException)
-            { 
+            {
                 // blob.PutBlock error
                 return false;
             }
@@ -658,13 +659,13 @@ namespace AzureFtpServer.Provider {
 
             blob.FetchAttributes();
 
-            Trace.WriteLine("GetMd5#"+blob.Properties.ContentMD5);
+            Trace.WriteLine("GetMd5#" + blob.Properties.ContentMD5);
         }
 
         private void rootFix(ref CloudBlobContainer container, ref string blobPath)
         {
             if (ContainerName != "$root") return;
-            
+
             var slashIdx = blobPath.IndexOf('/');
             if (slashIdx > -1)
             {

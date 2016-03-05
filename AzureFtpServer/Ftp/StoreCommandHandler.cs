@@ -1,9 +1,9 @@
-using System.Text;
-using System.Security.Cryptography;
 using AzureFtpServer.Ftp;
 using AzureFtpServer.Ftp.FileSystem;
-using AzureFtpServer.General;
 using AzureFtpServer.Ftp.General;
+using AzureFtpServer.General;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace AzureFtpServer.FtpCommands
 {
@@ -81,7 +81,7 @@ namespace AzureFtpServer.FtpCommands
                     nReceived = socketData.Receive(abData);
                 }
                 md5Hash.TransformFinalBlock(new byte[1], 0, 0);
-                md5Value = BytesToStr(md5Hash.Hash);                
+                md5Value = BytesToStr(md5Hash.Hash);
             }
             // TYPE A
             // won't compute md5, because read characters from client stream
@@ -90,7 +90,8 @@ namespace AzureFtpServer.FtpCommands
                 int readSize = SocketHelpers.CopyStreamAscii(socketData.Socket.GetStream(), file.BlobStream, m_nBufferSize);
                 FtpServerMessageHandler.SendMessage(ConnectionObject.Id, string.Format("Use ascii type success, read {0} chars!", readSize));
             }
-            else { // mustn't reach
+            else
+            { // mustn't reach
                 file.Close();
                 socketData.Close();
                 return GetMessage(451, "Error in transfer data: invalid data type.");

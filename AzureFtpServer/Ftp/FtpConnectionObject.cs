@@ -1,11 +1,11 @@
+using AzureFtpServer.Ftp;
+using AzureFtpServer.Ftp.FileSystem;
+using AzureFtpServer.FtpCommands;
+using AzureFtpServer.General;
 using System;
 using System.Collections;
 using System.Net.Sockets;
 using System.Text;
-using AzureFtpServer.Ftp.FileSystem;
-using AzureFtpServer.FtpCommands;
-using AzureFtpServer.Ftp;
-using AzureFtpServer.General;
 
 namespace AzureFtpServer.Ftp
 {
@@ -71,7 +71,7 @@ namespace AzureFtpServer.Ftp
         {
             #region RFC959: Base Commands
 
-            AddCommand(new AbortCommandHandler(this));// stop data connection
+            AddCommand(new AbortCommandHandler(this)); // stop data connection
             AddCommand(new AccountCommandHandler(this));
             AddCommand(new AlloCommandHandler(this));
             AddCommand(new AppendCommandHandler(this));
@@ -90,7 +90,7 @@ namespace AzureFtpServer.Ftp
             AddCommand(new PwdCommandHandler(this));
             AddCommand(new QuitCommandHandler(this));
             AddCommand(new ReinitializeCommandHandler(this));
-            AddCommand(new RestartCommandHandler(this));// not imp
+            AddCommand(new RestartCommandHandler(this)); // not imp
             AddCommand(new RetrCommandHandler(this));
             AddCommand(new RemoveDirectoryCommandHandler(this));
             AddCommand(new RenameStartCommandHandler(this));

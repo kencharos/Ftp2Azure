@@ -30,7 +30,7 @@ namespace AzureFtpServer.FtpCommands
             {
                 return GetMessage(553, string.Format("\"{0}\" is not a valid file name", sMessage));
             }
-            
+
             // check whether the new filename exists
             // note: azure allows file&virtualdir has the same name
             if (ConnectionObject.FileSystemObject.FileExists(sNewFileName))

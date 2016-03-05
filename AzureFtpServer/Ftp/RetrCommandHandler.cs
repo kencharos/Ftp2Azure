@@ -22,7 +22,7 @@ namespace AzureFtpServer.FtpCommands
             sMessage = sMessage.Trim();
             if (sMessage == "")
                 return GetMessage(501, string.Format("{0} needs a parameter", Command));
-            
+
             string sFilePath = GetPath(sMessage);
 
             if (!ConnectionObject.FileSystemObject.FileExists(sFilePath))
@@ -31,14 +31,14 @@ namespace AzureFtpServer.FtpCommands
             }
 
             var socketData = new FtpDataSocket(ConnectionObject);
-            
+
             if (!socketData.Loaded)
             {
                 return GetMessage(425, "Unable to establish the data connection");
             }
 
             SocketHelpers.Send(ConnectionObject.Socket, "150 Starting data transfer, please wait...\r\n", ConnectionObject.Encoding);
-            
+
             IFile file = ConnectionObject.FileSystemObject.OpenFile(sFilePath, false);
 
             if (file == null)

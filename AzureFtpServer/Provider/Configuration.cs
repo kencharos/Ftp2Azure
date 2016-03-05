@@ -11,7 +11,6 @@ namespace AzureFtpServer.Provider
 
     public class StorageProviderConfiguration
     {
-        
         public static string FtpAccount
         {
             get

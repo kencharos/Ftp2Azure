@@ -1,5 +1,5 @@
-﻿using AzureFtpServer.Ftp.FileSystem;
-using AzureFtpServer.Ftp;
+﻿using AzureFtpServer.Ftp;
+using AzureFtpServer.Ftp.FileSystem;
 
 namespace AzureFtpServer.Azure
 {
@@ -26,10 +26,10 @@ namespace AzureFtpServer.Azure
 
             if (!m_accountManager.CheckAccount(sUser, sPassword))
                 return null;
-            
-            string containerName = sUser; 
+
+            string containerName = sUser;
             var system = new AzureFileSystem(containerName);
-            
+
             return system;
         }
 

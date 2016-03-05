@@ -1,6 +1,6 @@
+using AzureFtpServer.Ftp.FileSystem;
 using System.Net.Sockets;
 using System.Text;
-using AzureFtpServer.Ftp.FileSystem;
 
 namespace AzureFtpServer.Ftp
 {
@@ -150,10 +150,10 @@ namespace AzureFtpServer.Ftp
         /// The client's data connnection socket in passive mode
         /// </summary>
         public TcpClient PassiveSocket
-        { 
+        {
             get { return m_passiveSocket; }
-            
-            set { m_passiveSocket = value; } 
+
+            set { m_passiveSocket = value; }
         }
 
         /// <summary>

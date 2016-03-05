@@ -1,10 +1,9 @@
+using AzureFtpServer.Provider;
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Security.Cryptography;
-using AzureFtpServer.Provider;
 
 namespace AzureFtpServer.General
 {

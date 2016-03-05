@@ -1,8 +1,8 @@
-using System.Text;
 using AzureFtpServer.Ftp;
+using AzureFtpServer.Ftp.FileSystem;
 using AzureFtpServer.Ftp.General;
 using AzureFtpServer.General;
-using AzureFtpServer.Ftp.FileSystem;
+using System.Text;
 
 namespace AzureFtpServer.FtpCommands
 {
@@ -36,6 +36,6 @@ namespace AzureFtpServer.FtpCommands
 
             return entry.ToString();
         }
-        
+
     }
 }

@@ -1,7 +1,7 @@
-﻿using System.Text;
-using AzureFtpServer.General;
-using AzureFtpServer.Ftp;
+﻿using AzureFtpServer.Ftp;
 using AzureFtpServer.Ftp.General;
+using AzureFtpServer.General;
+using System.Text;
 
 namespace AzureFtpServer.FtpCommands
 {
@@ -13,7 +13,7 @@ namespace AzureFtpServer.FtpCommands
     {
         public MlsdCommandHandler(FtpConnectionObject connectionObject)
             : base("MLSD", connectionObject)
-        { 
+        {
         }
 
         protected override string OnProcess(string sMessage)
@@ -47,11 +47,11 @@ namespace AzureFtpServer.FtpCommands
             if (files != null)
             {
                 foreach (var file in files)
-                { 
+                {
                     var fileInfo = ConnectionObject.FileSystemObject.GetFileInfo(file);
-                    
+
                     response.Append(GenerateEntry(fileInfo));
-                    
+
                     response.Append("\r\n");
                 }
             }

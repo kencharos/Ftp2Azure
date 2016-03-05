@@ -1,5 +1,5 @@
-﻿using System;
-using AzureFtpServer.Ftp;
+﻿using AzureFtpServer.Ftp;
+using System;
 
 namespace AzureFtpServer.FtpCommands
 {

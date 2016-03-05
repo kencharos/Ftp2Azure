@@ -16,24 +16,24 @@ namespace AzureFtpServer.FtpCommands
         protected override string OnProcess(string sMessage)
         {
             string[] args = sMessage.Split(' ');
-            
+
             if (args.Length > 2 || args.Length < 1)
             {
                 return GetMessage(501, string.Format("Invalid TYPE parameter: {0}", sMessage));
             }
 
             switch (args[0].ToUpper())
-            { 
+            {
                 case "A":
                     ConnectionObject.DataType = DataType.Ascii;
                     if (args.Length == 1)
                     {
                         return GetMessage(200, string.Format("{0} command succeeded, data type is Ascii", Command));
                     }
-                    else 
+                    else
                     {
                         switch (args[1].ToUpper())
-                        { 
+                        {
                             case "N":
                                 ConnectionObject.FormatControl = FormatControl.NonPrint;
                                 return GetMessage(200, string.Format("{0} command succeeded, data type is Ascii, format is NonPrint", Command));
