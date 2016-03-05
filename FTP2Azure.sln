@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFtpServer", "AzureFtpServer\AzureFtpServer.csproj", "{A6520CEB-6E55-4C9D-B581-64E432DB16D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ftp2Azure", "Ftp2Azure\Ftp2Azure.csproj", "{A6520CEB-6E55-4C9D-B581-64E432DB16D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
