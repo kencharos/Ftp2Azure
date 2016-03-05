@@ -1,9 +1,9 @@
-using System;
-using System.Net;
-using System.Net.Sockets;
 using AzureFtpServer.Ftp;
 using AzureFtpServer.General;
-using Microsoft.WindowsAzure.ServiceRuntime;
+using System;
+using System.Configuration;
+using System.Net;
+using System.Net.Sockets;
 
 namespace AzureFtpServer.FtpCommands
 {
@@ -20,7 +20,7 @@ namespace AzureFtpServer.FtpCommands
             : base("PASV", connectionObject)
         {
             // set passive listen port
-            m_nPort = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["FTPPASV"].IPEndpoint.Port;
+            m_nPort = int.Parse(ConfigurationManager.AppSettings["FtpPasvPort"]);
         }
 
         protected override string OnProcess(string sMessage)
@@ -33,7 +33,7 @@ namespace AzureFtpServer.FtpCommands
 
             
 
-            TcpListener listener = SocketHelpers.CreateTcpListener(RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["FTPPASV"].IPEndpoint);
+            TcpListener listener = SocketHelpers.CreateTcpListener(new IPEndPoint(IPAddress.Any, m_nPort));
 
             if (listener == null)
             {

@@ -1,7 +1,6 @@
 using System.Net.Sockets;
 using System.Text;
 using AzureFtpServer.General;
-using Microsoft.WindowsAzure.ServiceRuntime;
 
 namespace AzureFtpServer.Ftp
 {

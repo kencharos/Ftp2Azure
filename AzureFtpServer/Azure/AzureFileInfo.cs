@@ -26,7 +26,7 @@ namespace AzureFtpServer.Azure
             return _file.FtpPath;
         }
 
-        public DateTime GetModifiedTime()
+        public DateTimeOffset GetModifiedTime()
         {
             return _file.LastModified;
         }

@@ -1,12 +1,11 @@
+using AzureFtpServer.Ftp.FileSystem;
+using AzureFtpServer.General;
 using System;
 using System.Collections;
+using System.Configuration;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Diagnostics;
-using AzureFtpServer.Ftp.FileSystem;
-using AzureFtpServer.General;
-using Microsoft.WindowsAzure.ServiceRuntime;
 
 namespace AzureFtpServer.Ftp
 {
@@ -102,16 +101,16 @@ namespace AzureFtpServer.Ftp
             FtpServerMessageHandler.Message += TraceMessage;
 
             // listen at the port by the "FTP" endpoint setting
-            System.Net.IPEndPoint ipEndPoint = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints["FTP"].IPEndpoint;
+            var ipEndPoint = new System.Net.IPEndPoint(System.Net.IPAddress.Any, 21);
             m_socketListen = SocketHelpers.CreateTcpListener(ipEndPoint);
 
             if (m_socketListen != null)
             {
-                Trace.TraceInformation("FTP Server listened at: " + ipEndPoint);
+                Console.WriteLine("Information: FTP Server listened at: " + ipEndPoint);
 
                 m_socketListen.Start();
 
-                Trace.TraceInformation("FTP Server Started");
+                Console.WriteLine("Information: FTP Server Started");
 
                 bool fContinue = true;
 
@@ -135,7 +134,8 @@ namespace AzureFtpServer.Ftp
                         }
                         else if (m_apConnections.Count >= m_maxClients)
                         {
-                            Trace.WriteLine("Too many clients, won't handle this connection", "Warnning");
+                            Console.WriteLine(
+                                "Warning: Too many clients, won't handle this connection");
                             SendRejectMessage(socket);
                             socket.Close();
                         }
@@ -166,17 +166,17 @@ namespace AzureFtpServer.Ftp
         /// </summary>
         private void InitialiseConnectionEncoding()
         {
-            string encoding = RoleEnvironment.GetConfigurationSettingValue("ConnectionEncoding");
+            string encoding = ConfigurationManager.AppSettings["ConnectionEncoding"];
             switch (encoding)
             {
                 case "ASCII":
                     m_encoding = Encoding.ASCII;
-                    Trace.WriteLine("Set ftp connection encoding: ASCII", "Information");
+                    Console.WriteLine("Information: Set ftp connection encoding: ASCII");
                     break;
                 case "UTF8":
                 default:
                     m_encoding = Encoding.UTF8;
-                    Trace.WriteLine("Set ftp connection encoding: UTF8", "Information");
+                    Console.WriteLine("Information: Set ftp connection encoding: UTF8");
                     break;
             }
         }
@@ -187,7 +187,7 @@ namespace AzureFtpServer.Ftp
         /// </summary>
         private void InitialiseMaxClients()
         {
-            string maxClients = RoleEnvironment.GetConfigurationSettingValue("MaxClients");
+            string maxClients = ConfigurationManager.AppSettings["MaxClients"];
 
             int iMaxClients = 5;
             
@@ -198,7 +198,7 @@ namespace AzureFtpServer.Ftp
             catch (Exception)
             { 
                 // if the "MaxClients" setting is invalid to convert into integer, use default value
-                Trace.WriteLine(string.Format("Invalid MaxClients setting: {0}", maxClients), "Warnning");
+                Console.WriteLine("Warning: Invalid MaxClients setting: {0}", maxClients);
             }
 
             if (iMaxClients <= 0)
@@ -212,7 +212,8 @@ namespace AzureFtpServer.Ftp
 
         private void SendAcceptMessage(TcpClient socket)
         {
-            SocketHelpers.Send(socket, m_encoding.GetBytes("220 FTP to Windows Azure Blob Storage Bridge Ready\r\n"));
+            SocketHelpers.Send(socket, m_encoding.GetBytes(
+                "220 FTP to Windows Azure Blob Storage Bridge Ready\r\n"));
         }
 
         private void SendRejectMessage(TcpClient socket)
@@ -230,9 +231,9 @@ namespace AzureFtpServer.Ftp
 
             m_apConnections.Add(handler);
 
-            Trace.WriteLine(
-                string.Format("Add a new handler, current connection number is {0}", m_apConnections.Count),
-                "Information");
+            Console.WriteLine(
+                "Information: Add a new handler, current connection number is {0}",
+                m_apConnections.Count);
 
             handler.Closed += handler_Closed;
 
@@ -250,9 +251,9 @@ namespace AzureFtpServer.Ftp
         {
             m_apConnections.Remove(handler);
 
-            Trace.WriteLine(
-                string.Format("Remover a handler, current connection number is {0}", m_apConnections.Count),
-                "Information");
+            Console.WriteLine(
+                "Information: Remover a handler, current connection number is {0}",
+                m_apConnections.Count);
 
             if (ConnectionClosed != null)
             {
@@ -262,7 +263,7 @@ namespace AzureFtpServer.Ftp
 
         public void TraceMessage(int nId, string sMessage)
         {
-            Trace.WriteLine(string.Format("{0}: {1}", nId, sMessage), "FtpServerMessage");
+            Console.WriteLine("FtpServerMessage: {0}: {1}", nId, sMessage);
         }
 
         #endregion

@@ -1,9 +1,9 @@
-﻿using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.WindowsAzure.StorageClient;
-using AzureFtpServer.Ftp.FileSystem;
+﻿using AzureFtpServer.Ftp.FileSystem;
 using AzureFtpServer.Provider;
+using Microsoft.WindowsAzure.Storage.Blob;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace AzureFtpServer.Azure
 {

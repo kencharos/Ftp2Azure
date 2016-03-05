@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using Microsoft.WindowsAzure.ServiceRuntime;
-using Microsoft.WindowsAzure.StorageClient;
 
 namespace AzureFtpServer.Provider
 {
@@ -18,7 +16,7 @@ namespace AzureFtpServer.Provider
         {
             get
             {
-                return RoleEnvironment.GetConfigurationSettingValue("FtpAccount");
+                return ConfigurationManager.AppSettings["FtpAccount"];
             }
         }
 
@@ -26,7 +24,7 @@ namespace AzureFtpServer.Provider
         {
             get
             {
-                return (Modes)Enum.Parse(typeof(Provider.Modes), RoleEnvironment.GetConfigurationSettingValue("Mode"));
+                return (Modes)Enum.Parse(typeof(Provider.Modes), ConfigurationManager.AppSettings["Mode"]);
             }
         }
 
@@ -34,7 +32,7 @@ namespace AzureFtpServer.Provider
         {
             get
             {
-                return bool.Parse(RoleEnvironment.GetConfigurationSettingValue("QueueNotification"));
+                return bool.Parse(ConfigurationManager.AppSettings["QueueNotification"]);
             }
         }
 
@@ -42,7 +40,7 @@ namespace AzureFtpServer.Provider
         {
             get
             {
-                return int.Parse(RoleEnvironment.GetConfigurationSettingValue("MaxIdleSeconds"));
+                return int.Parse(ConfigurationManager.AppSettings["MaxIdleSeconds"]);
             }
         }
 
@@ -50,7 +48,7 @@ namespace AzureFtpServer.Provider
         {
             get
             {
-                return RoleEnvironment.GetConfigurationSettingValue("FtpServerHost");
+                return ConfigurationManager.AppSettings["FtpServerHost"];
             }
         }
     }

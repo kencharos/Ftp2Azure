@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Microsoft.WindowsAzure.ServiceRuntime;
 using AzureFtpServer.Provider;
 
 namespace AzureFtpServer.Ftp

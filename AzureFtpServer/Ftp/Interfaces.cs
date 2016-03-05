@@ -13,7 +13,7 @@ namespace AzureFtpServer.Ftp.FileSystem
 
     public interface IFileInfo
     {
-        DateTime GetModifiedTime();
+        DateTimeOffset GetModifiedTime();
         long GetSize();
         string GetAttributeString();
         bool IsDirectory();

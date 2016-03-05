@@ -59,9 +59,9 @@ namespace AzureFtpServer.Azure
                 try
                 {
                     if (BlobStream.CanWrite)
-                    {
-                        BlobStream.Flush();
-                    }
+                        try { BlobStream.Flush(); }
+                        catch { }
+
                     BlobStream.Close();
                 }
                 catch (IOException)

@@ -167,7 +167,7 @@ namespace AzureFtpServer.FtpCommands
             stringBuilder.Append(" ");
 
             // modify time
-            DateTime fileDate = info.GetModifiedTime(); //if info is directory, the modify time will be the current time
+            DateTimeOffset fileDate = info.GetModifiedTime(); //if info is directory, the modify time will be the current time
             // month
             stringBuilder.Append(TextHelpers.Month(fileDate.Month));
             stringBuilder.Append(" ");

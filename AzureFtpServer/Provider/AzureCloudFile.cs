@@ -7,7 +7,7 @@ namespace AzureFtpServer.Provider
     {
         #region AzureCloudFile Members
 
-        public DateTime LastModified { get; set; }
+        public DateTimeOffset LastModified { get; set; }
         public long Size { get; set; }
         public Uri Uri { get; set; } // not used
         public string FtpPath { get; set; }
