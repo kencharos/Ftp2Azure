@@ -5,6 +5,7 @@ using System;
 using System.Configuration;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -26,8 +27,9 @@ namespace Ftp2Azure.FtpCommands
             m_nPort = int.Parse(config["FtpPasvPort"]);
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
+            await Task.CompletedTask;
             ConnectionObject.DataConnectionType = DataConnectionType.Passive;
 
             string pasvListenAddress = GetPassiveAddressInfo();

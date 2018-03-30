@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.Ftp.FileSystem
 {
@@ -23,24 +24,24 @@ namespace Ftp2Azure.Ftp.FileSystem
 
     public interface IFileSystem
     {
-        IFile OpenFile(string sPath, bool fWrite);
-        IFileInfo GetFileInfo(string sPath);
-        IFileInfo GetDirectoryInfo(string sPath);
+        Task<IFile> OpenFile(string sPath, bool fWrite);
+        Task<IFileInfo> GetFileInfo(string sPath);
+        Task<IFileInfo> GetDirectoryInfo(string sPath);
 
-        string[] GetFiles(string sDirPath);
-        string[] GetDirectories(string sDirPath);
+        Task<string[]> GetFiles(string sDirPath);
+        Task<string[]> GetDirectories(string sDirPath);
 
-        bool DirectoryExists(string sDirPath);
-        bool FileExists(string sPath);
+        Task<bool> DirectoryExists(string sDirPath);
+        Task<bool> FileExists(string sPath);
 
-        bool CreateDirectory(string sPath);
-        bool Move(string sOldPath, string sNewPath);// file, not directory
-        bool DeleteFile(string sPath);
-        bool DeleteDirectory(string sPath);
-        bool AppendFile(string sPath, Stream stream);
+        Task<bool> CreateDirectory(string sPath);
+        Task<bool> Move(string sOldPath, string sNewPath);// file, not directory
+        Task<bool> DeleteFile(string sPath);
+        Task<bool> DeleteDirectory(string sPath);
+        Task<bool> AppendFile(string sPath, Stream stream);
 
-        void Log4Upload(string sPath);// upload notification
-        void SetFileMd5(string sPath, string md5Value);// record md5 for upload files
+        Task Log4Upload(string sPath);// upload notification
+        Task SetFileMd5(string sPath, string md5Value);// record md5 for upload files
     }
 
     public interface IFileSystemClassFactory

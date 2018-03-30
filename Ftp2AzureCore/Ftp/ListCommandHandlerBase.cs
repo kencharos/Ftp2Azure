@@ -4,6 +4,7 @@ using Ftp2Azure.Ftp.General;
 using Ftp2Azure.General;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -17,7 +18,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
 
@@ -41,16 +42,16 @@ namespace Ftp2Azure.FtpCommands
             if (targetToList.EndsWith(@"/"))
             {
                 targetIsFile = false;
-                if (ConnectionObject.FileSystemObject.DirectoryExists(targetToList))
+                if (await ConnectionObject.FileSystemObject.DirectoryExists(targetToList))
                     targetIsDir = true;
             }
             else
             {
                 // check whether the target to list is a directory
-                if (ConnectionObject.FileSystemObject.DirectoryExists(FileNameHelpers.AppendDirTag(targetToList)))
+                if (await ConnectionObject.FileSystemObject.DirectoryExists(FileNameHelpers.AppendDirTag(targetToList)))
                     targetIsDir = true;
                 // check whether the target to list is a file
-                if (ConnectionObject.FileSystemObject.FileExists(targetToList))
+                if (await ConnectionObject.FileSystemObject.FileExists(targetToList))
                     targetIsFile = true;
             }
 
@@ -64,8 +65,8 @@ namespace Ftp2Azure.FtpCommands
             else if (targetIsDir)
             {
                 targetToList = FileNameHelpers.AppendDirTag(targetToList);
-                asFiles = ConnectionObject.FileSystemObject.GetFiles(targetToList);
-                asDirectories = ConnectionObject.FileSystemObject.GetDirectories(targetToList);
+                asFiles = await ConnectionObject.FileSystemObject.GetFiles(targetToList);
+                asDirectories = await ConnectionObject.FileSystemObject.GetDirectories(targetToList);
             }
             else
             {
@@ -83,7 +84,7 @@ namespace Ftp2Azure.FtpCommands
             SocketHelpers.Send(ConnectionObject.Socket, string.Format("150 Opening data connection for {0}\r\n", Command), ConnectionObject.Encoding);
 
             // generate the response
-            string sFileList = BuildReply(asFiles, asDirectories);
+            string sFileList = await BuildReply(asFiles, asDirectories);
 
             // ToDo, send response according to ConnectionObject.DataType, i.e., Ascii or Binary
             socketData.Send(sFileList, Encoding.UTF8);
@@ -92,7 +93,7 @@ namespace Ftp2Azure.FtpCommands
             return GetMessage(226, string.Format("{0} successful.", Command));
         }
 
-        protected abstract string BuildReply(string[] asFiles, string[] asDirectories);
+        protected abstract Task<string> BuildReply(string[] asFiles, string[] asDirectories);
 
         // build short list reply, only list the file names
         protected string BuildShortReply(string[] asFiles, string[] asDirectories)
@@ -119,7 +120,7 @@ namespace Ftp2Azure.FtpCommands
         }
 
         // build detailed list reply
-        protected string BuildLongReply(string[] asFiles, string[] asDirectories)
+        protected async Task<string> BuildLongReply(string[] asFiles, string[] asDirectories)
         {
             var stringBuilder = new StringBuilder();
 
@@ -127,7 +128,7 @@ namespace Ftp2Azure.FtpCommands
             {
                 foreach (string filePath in asFiles)
                 {
-                    IFileInfo fileInfo = ConnectionObject.FileSystemObject.GetFileInfo(filePath);
+                    IFileInfo fileInfo = await ConnectionObject.FileSystemObject.GetFileInfo(filePath);
 
                     stringBuilder.Append(GetLongProperty(fileInfo));
                 }
@@ -137,7 +138,7 @@ namespace Ftp2Azure.FtpCommands
             {
                 foreach (string dirPath in asDirectories)
                 {
-                    IFileInfo dirInfo = ConnectionObject.FileSystemObject.GetDirectoryInfo(dirPath);
+                    IFileInfo dirInfo = await ConnectionObject.FileSystemObject.GetDirectoryInfo(dirPath);
 
                     stringBuilder.Append(GetLongProperty(dirInfo));
                 }

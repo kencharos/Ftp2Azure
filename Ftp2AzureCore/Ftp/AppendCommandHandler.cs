@@ -1,6 +1,7 @@
 using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.General;
 using Ftp2Azure.General;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -18,7 +19,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
             if (sMessage == "")
@@ -40,13 +41,13 @@ namespace Ftp2Azure.FtpCommands
 
             SocketHelpers.Send(ConnectionObject.Socket, GetMessage(150, "Opening connection for data transfer."), ConnectionObject.Encoding);
 
-            if (!ConnectionObject.FileSystemObject.AppendFile(sFile, socketData.Socket.GetStream()))
+            if (!ConnectionObject.FileSystemObject.AppendFile(sFile, socketData.Socket.GetStream()).Result)
             {
                 return GetMessage(553, string.Format("{0} error", Command));
             }
 
             // remove the orginal blob ContentMD5
-            ConnectionObject.FileSystemObject.SetFileMd5(sFile, string.Empty);
+            await ConnectionObject.FileSystemObject.SetFileMd5(sFile, string.Empty);
 
             return GetMessage(250, string.Format("{0} successful", Command));
         }

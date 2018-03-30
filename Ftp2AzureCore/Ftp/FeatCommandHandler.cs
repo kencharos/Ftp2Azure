@@ -1,5 +1,6 @@
 ﻿using Ftp2Azure.Ftp;
 using Ftp2Azure.General;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -14,8 +15,9 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
+            await Task.CompletedTask;
             if (sMessage.Length != 0)
                 return GetMessage(501, "Invalid syntax for FEAT command");
 

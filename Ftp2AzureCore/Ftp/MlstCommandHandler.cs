@@ -2,6 +2,7 @@
 using Ftp2Azure.Ftp.General;
 using Ftp2Azure.General;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -16,7 +17,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
 
@@ -29,8 +30,8 @@ namespace Ftp2Azure.FtpCommands
                 return GetMessage(501, string.Format("\"{0}\" is not a valid file/directory name", sMessage));
             }
 
-            bool targetIsFile = ConnectionObject.FileSystemObject.FileExists(targetToList);
-            bool targetIsDir = ConnectionObject.FileSystemObject.DirectoryExists(FileNameHelpers.AppendDirTag(targetToList));
+            bool targetIsFile = await ConnectionObject.FileSystemObject.FileExists(targetToList);
+            bool targetIsDir = await ConnectionObject.FileSystemObject.DirectoryExists(FileNameHelpers.AppendDirTag(targetToList));
 
             if (!targetIsFile && !targetIsDir)
                 return GetMessage(550, string.Format("\"{0}\" not exists", sMessage));
@@ -42,7 +43,7 @@ namespace Ftp2Azure.FtpCommands
             if (targetIsFile)
             {
                 response.Append(" ");
-                var fileInfo = ConnectionObject.FileSystemObject.GetFileInfo(targetToList);
+                var fileInfo = await ConnectionObject.FileSystemObject.GetFileInfo(targetToList);
                 response.Append(GenerateEntry(fileInfo));
                 response.Append("\r\n");
             }
@@ -50,7 +51,7 @@ namespace Ftp2Azure.FtpCommands
             if (targetIsDir)
             {
                 response.Append(" ");
-                var dirInfo = ConnectionObject.FileSystemObject.GetDirectoryInfo(FileNameHelpers.AppendDirTag(targetToList));
+                var dirInfo = await ConnectionObject.FileSystemObject.GetDirectoryInfo(FileNameHelpers.AppendDirTag(targetToList));
                 response.Append(GenerateEntry(dirInfo));
                 response.Append("\r\n");
             }

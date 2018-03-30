@@ -1,4 +1,5 @@
 ﻿using Ftp2Azure.Ftp;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -12,20 +13,20 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override Task<string> OnProcess(string sMessage)
         {
             if (sMessage.Length != 0)
             {
-                return GetMessage(501, string.Format("Invalid syntax for {0} command", Command));
+                return Task.FromResult<string>(GetMessage(501, string.Format("Invalid syntax for {0} command", Command)));
             }
 
             // get the parent directory
             string parentDir = GetParentDir();
             if (parentDir == null)
-                return GetMessage(550, "Root directory, cannot change to the parent directory");
+                return Task.FromResult<string>(GetMessage(550, "Root directory, cannot change to the parent directory"));
 
             ConnectionObject.CurrentDirectory = parentDir;
-            return GetMessage(200, string.Format("{0} Successful ({1})", Command, parentDir));
+            return Task.FromResult<string>(GetMessage(200, string.Format("{0} Successful ({1})", Command, parentDir)));
         }
     }
 }

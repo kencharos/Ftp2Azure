@@ -1,6 +1,7 @@
 using Ftp2Azure.General;
 using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.General;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -16,7 +17,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
 
@@ -47,16 +48,16 @@ namespace Ftp2Azure.FtpCommands
             if (targetToList.EndsWith(@"/"))
             {
                 targetIsFile = false;
-                if (ConnectionObject.FileSystemObject.DirectoryExists(targetToList))
+                if (await ConnectionObject.FileSystemObject.DirectoryExists(targetToList))
                     targetIsDir = true;
             }
             else
             {
                 // check whether the target to list is a directory
-                if (ConnectionObject.FileSystemObject.DirectoryExists(FileNameHelpers.AppendDirTag(targetToList)))
+                if (await ConnectionObject.FileSystemObject.DirectoryExists(FileNameHelpers.AppendDirTag(targetToList)))
                     targetIsDir = true;
                 // check whether the target to list is a file
-                if (ConnectionObject.FileSystemObject.FileExists(targetToList))
+                if (await ConnectionObject.FileSystemObject.FileExists(targetToList))
                     targetIsFile = true;
             }
 
@@ -70,8 +71,8 @@ namespace Ftp2Azure.FtpCommands
             else if (targetIsDir)
             {
                 targetToList = FileNameHelpers.AppendDirTag(targetToList);
-                asFiles = ConnectionObject.FileSystemObject.GetFiles(targetToList);
-                asDirectories = ConnectionObject.FileSystemObject.GetDirectories(targetToList);
+                asFiles = await ConnectionObject.FileSystemObject.GetFiles(targetToList);
+                asDirectories = await ConnectionObject.FileSystemObject.GetDirectories(targetToList);
             }
             else
             {
@@ -79,7 +80,7 @@ namespace Ftp2Azure.FtpCommands
             }
 
             // generate the response
-            string sFileList = BuildReply(asFiles, asDirectories);
+            string sFileList = await BuildReply(asFiles, asDirectories);
 
             SocketHelpers.Send(ConnectionObject.Socket, string.Format("213-Begin STAT \"{0}\":\r\n", sMessage), ConnectionObject.Encoding);
 
@@ -88,9 +89,9 @@ namespace Ftp2Azure.FtpCommands
             return GetMessage(213, string.Format("{0} successful.", Command));
         }
 
-        protected override string BuildReply(string[] asFiles, string[] asDirectories)
+        protected override async Task<string> BuildReply(string[] asFiles, string[] asDirectories)
         {
-            return BuildLongReply(asFiles, asDirectories);
+            return await BuildLongReply(asFiles, asDirectories);
         }
     }
 }

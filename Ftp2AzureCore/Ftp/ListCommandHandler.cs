@@ -1,4 +1,5 @@
 using Ftp2Azure.Ftp;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -13,9 +14,9 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string BuildReply(string[] asFiles, string[] asDirectories)
+        protected override async Task<string> BuildReply(string[] asFiles, string[] asDirectories)
         {
-            return BuildLongReply(asFiles, asDirectories);
+            return await BuildLongReply(asFiles, asDirectories);
         }
     }
 }

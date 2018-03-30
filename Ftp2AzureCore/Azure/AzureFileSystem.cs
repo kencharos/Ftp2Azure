@@ -5,6 +5,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.Azure
 {
@@ -23,16 +24,16 @@ namespace Ftp2Azure.Azure
 
         #region Implementation of IFileSystem
 
-        public IFile OpenFile(string sPath, bool fWrite)
+        public async Task<IFile> OpenFile(string sPath, bool fWrite)
         {
             var f = new AzureFile();
             if (fWrite == true)
             {
-                f.BlobStream = _provider.GetWriteBlobStream(sPath);
+                f.BlobStream = await _provider.GetWriteBlobStream(sPath);
             }
             else
             {
-                f.BlobStream = _provider.GetReadBlobStream(sPath);
+                f.BlobStream = await _provider.GetReadBlobStream(sPath);
             }
 
             if (f.BlobStream == null)
@@ -41,16 +42,16 @@ namespace Ftp2Azure.Azure
             return f;
         }
 
-        public IFileInfo GetFileInfo(string sPath)
+        public async Task<IFileInfo> GetFileInfo(string sPath)
         {
-            AzureCloudFile file = _provider.GetBlobInfo(sPath, false);
+            AzureCloudFile file = await _provider.GetBlobInfo(sPath, false);
 
             return new AzureFileInfo(file);
         }
 
-        public IFileInfo GetDirectoryInfo(string sDirPath)
+        public async Task<IFileInfo> GetDirectoryInfo(string sDirPath)
         {
-            AzureCloudFile dir = _provider.GetBlobInfo(sDirPath, true);
+            AzureCloudFile dir = await _provider.GetBlobInfo(sDirPath, true);
 
             return new AzureFileInfo(dir);
         }
@@ -60,9 +61,9 @@ namespace Ftp2Azure.Azure
         /// </summary>
         /// <param name="sDirPath">directory path</param>
         /// <returns>an arry of filenames</returns>
-        public string[] GetFiles(string sDirPath)
+        public async Task<string[]> GetFiles(string sDirPath)
         {
-            IEnumerable<CloudBlob> files = _provider.GetFileListing(sDirPath);
+            IEnumerable<CloudBlob> files = await _provider.GetFileListing(sDirPath);
             string[] result = files.Select(r => r.Uri.AbsolutePath.ToString()).ToArray().ToFtpPath(sDirPath);
             return result;
         }
@@ -72,17 +73,17 @@ namespace Ftp2Azure.Azure
         /// </summary>
         /// <param name="sDirPath">directory path</param>
         /// <returns>an arry of directorynames</returns>
-        public string[] GetDirectories(string sDirPath)
+        public async Task<string[]> GetDirectories(string sDirPath)
         {
             string[] result;
 
             if (_containerName + sDirPath == "$root/")
-                result = _provider.GetContainerListing()
+                result = (await _provider.GetContainerListing())
                     .Select(r => r.Uri.AbsolutePath.ToString())
                     .Where(s => s != "/$root").Select(s => "/$root" + s + "/")
                     .ToArray();
             else
-                result = _provider.GetDirectoryListing(sDirPath)
+                result = (await _provider.GetDirectoryListing(sDirPath))
                     .Select(r => r.Uri.AbsolutePath.ToString())
                     .ToArray().ToFtpPath(sDirPath);
 
@@ -94,9 +95,9 @@ namespace Ftp2Azure.Azure
         /// </summary>
         /// <param name="sPath">the directory name, final char is '/'</param>
         /// <returns></returns>
-        public bool DirectoryExists(string sDirPath)
+        public async Task<bool> DirectoryExists(string sDirPath)
         {
-            return _provider.IsValidDirectory(sDirPath);
+            return await _provider.IsValidDirectory(sDirPath);
         }
 
         /// <summary>
@@ -104,44 +105,44 @@ namespace Ftp2Azure.Azure
         /// </summary>
         /// <param name="sPath">the file name</param>
         /// <returns></returns>
-        public bool FileExists(string sPath)
+        public async Task<bool> FileExists(string sPath)
         {
-            return _provider.IsValidFile(sPath);
+            return await _provider.IsValidFile(sPath);
         }
 
-        public bool CreateDirectory(string sPath)
+        public async Task<bool> CreateDirectory(string sPath)
         {
-            return _provider.CreateDirectory(sPath);
+            return await _provider.CreateDirectory(sPath);
         }
 
-        public bool Move(string sOldPath, string sNewPath)
+        public async Task<bool> Move(string sOldPath, string sNewPath)
         {
-            return _provider.Rename(sOldPath, sNewPath) == StorageOperationResult.Completed;
+            return await _provider.Rename(sOldPath, sNewPath) == StorageOperationResult.Completed;
         }
 
-        public bool DeleteFile(string sPath)
+        public async Task<bool> DeleteFile(string sPath)
         {
-            return _provider.DeleteFile(sPath);
+            return await _provider.DeleteFile(sPath);
         }
 
-        public bool DeleteDirectory(string sPath)
+        public async Task<bool> DeleteDirectory(string sPath)
         {
-            return _provider.DeleteDirectory(sPath);
+            return await _provider.DeleteDirectory(sPath);
         }
 
-        public bool AppendFile(string sPath, Stream stream)
+        public async Task<bool> AppendFile(string sPath, Stream stream)
         {
-            return _provider.AppendFileFromStream(sPath, stream);
+            return await _provider.AppendFileFromStream(sPath, stream);
         }
 
-        public void Log4Upload(string sPath)
+        public async Task Log4Upload(string sPath)
         {
-            _provider.UploadNotification(sPath);
+            await _provider.UploadNotification(sPath);
         }
 
-        public void SetFileMd5(string sPath, string md5Value)
+        public async Task SetFileMd5(string sPath, string md5Value)
         {
-            _provider.SetBlobMd5(sPath, md5Value);
+            await _provider.SetBlobMd5(sPath, md5Value);
         }
 
         #endregion

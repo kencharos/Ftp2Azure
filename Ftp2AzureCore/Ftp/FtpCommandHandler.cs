@@ -1,6 +1,7 @@
 using Ftp2Azure.Ftp;
 using Ftp2Azure.General;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -44,13 +45,13 @@ namespace Ftp2Azure.FtpCommands
 
         public void Process(string sMessage)
         {
-            SendMessage(OnProcess(sMessage));
+            SendMessage(OnProcess(sMessage).Result);
         }
 
-        protected virtual string OnProcess(string sMessage)
+        protected virtual Task<string> OnProcess(string sMessage)
         {
             Debug.Assert(false, "FtpCommandHandler::OnProcess base called");
-            return "";
+            return Task.FromResult<string>("");
         }
 
         protected string GetMessage(int nReturnCode, string sMessage)

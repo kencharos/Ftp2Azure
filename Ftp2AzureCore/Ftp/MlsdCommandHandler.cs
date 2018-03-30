@@ -2,6 +2,7 @@
 using Ftp2Azure.Ftp.General;
 using Ftp2Azure.General;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -16,7 +17,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
 
@@ -32,7 +33,7 @@ namespace Ftp2Azure.FtpCommands
             // specify the directory tag
             targetToList = FileNameHelpers.AppendDirTag(targetToList);
 
-            bool targetIsDir = ConnectionObject.FileSystemObject.DirectoryExists(targetToList);
+            bool targetIsDir = await ConnectionObject.FileSystemObject.DirectoryExists(targetToList);
 
             if (!targetIsDir)
                 return GetMessage(550, string.Format("Directory \"{0}\" not exists", targetToList));
@@ -41,14 +42,14 @@ namespace Ftp2Azure.FtpCommands
 
             StringBuilder response = new StringBuilder();
 
-            string[] files = ConnectionObject.FileSystemObject.GetFiles(targetToList);
-            string[] directories = ConnectionObject.FileSystemObject.GetDirectories(targetToList);
+            string[] files = await ConnectionObject.FileSystemObject.GetFiles(targetToList);
+            string[] directories = await ConnectionObject.FileSystemObject.GetDirectories(targetToList);
 
             if (files != null)
             {
                 foreach (var file in files)
                 {
-                    var fileInfo = ConnectionObject.FileSystemObject.GetFileInfo(file);
+                    var fileInfo = await ConnectionObject.FileSystemObject.GetFileInfo(file);
 
                     response.Append(GenerateEntry(fileInfo));
 
@@ -60,7 +61,7 @@ namespace Ftp2Azure.FtpCommands
             {
                 foreach (var dir in directories)
                 {
-                    var dirInfo = ConnectionObject.FileSystemObject.GetDirectoryInfo(dir);
+                    var dirInfo = await ConnectionObject.FileSystemObject.GetDirectoryInfo(dir);
 
                     response.Append(GenerateEntry(dirInfo));
 

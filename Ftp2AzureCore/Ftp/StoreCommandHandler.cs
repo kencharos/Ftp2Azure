@@ -4,6 +4,7 @@ using Ftp2Azure.Ftp.General;
 using Ftp2Azure.General;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -20,7 +21,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
             if (sMessage == "")
@@ -33,7 +34,7 @@ namespace Ftp2Azure.FtpCommands
                 return GetMessage(553, string.Format("\"{0}\" is not a valid file name", sMessage));
             }
 
-            if (ConnectionObject.FileSystemObject.FileExists(sFile))
+            if (await ConnectionObject.FileSystemObject.FileExists(sFile))
             {
                 return GetMessage(553, string.Format("File \"{0}\" already exists.", sMessage));
             }
@@ -45,7 +46,7 @@ namespace Ftp2Azure.FtpCommands
                 return GetMessage(425, "Unable to establish the data connection");
             }
 
-            IFile file = ConnectionObject.FileSystemObject.OpenFile(sFile, true);
+            IFile file = await ConnectionObject.FileSystemObject.OpenFile(sFile, true);
 
             if (file == null)
             {
@@ -98,13 +99,13 @@ namespace Ftp2Azure.FtpCommands
             }
 
             // upload notification
-            ConnectionObject.FileSystemObject.Log4Upload(sFile);
+            await ConnectionObject.FileSystemObject.Log4Upload(sFile);
 
             file.Close();
             socketData.Close();
 
             // record md5
-            ConnectionObject.FileSystemObject.SetFileMd5(sFile, md5Value);
+            await ConnectionObject.FileSystemObject.SetFileMd5(sFile, md5Value);
 
             return GetMessage(226, string.Format("{0} successful", Command));
         }

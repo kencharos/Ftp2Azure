@@ -1,5 +1,6 @@
 using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.FileSystem;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -14,16 +15,16 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             string sPath = GetPath(sMessage);
 
-            if (!ConnectionObject.FileSystemObject.FileExists(sPath))
+            if (!await ConnectionObject.FileSystemObject.FileExists(sPath))
             {
                 return GetMessage(550, string.Format("File doesn't exist ({0})", sPath));
             }
 
-            IFileInfo info = ConnectionObject.FileSystemObject.GetFileInfo(sPath);
+            IFileInfo info = await ConnectionObject.FileSystemObject.GetFileInfo(sPath);
 
             if (info == null)
             {

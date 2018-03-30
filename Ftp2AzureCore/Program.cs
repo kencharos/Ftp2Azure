@@ -33,7 +33,7 @@ namespace Ftp2Azure
                 if (_server.Started)
                 {
                     Thread.Sleep(10000);
-                    //Console.WriteLine("Information: Server is alive");
+                    Console.WriteLine("Information: Server is alive");
                 }
                 else
                 {

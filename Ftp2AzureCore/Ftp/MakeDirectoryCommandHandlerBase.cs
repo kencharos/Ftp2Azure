@@ -1,5 +1,6 @@
 using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.General;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -13,7 +14,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
             if (sMessage == "")
@@ -26,11 +27,11 @@ namespace Ftp2Azure.FtpCommands
                 return GetMessage(553, string.Format("\"{0}\": Invalid directory name", sMessage));
 
             // check whether directory already exists
-            if (ConnectionObject.FileSystemObject.DirectoryExists(dirToMake))
+            if (await ConnectionObject.FileSystemObject.DirectoryExists(dirToMake))
                 return GetMessage(553, string.Format("Directory \"{0}\" already exists", sMessage));
 
             // create directory
-            if (!ConnectionObject.FileSystemObject.CreateDirectory(dirToMake))
+            if (!(await ConnectionObject.FileSystemObject.CreateDirectory(dirToMake)))
             {
                 return GetMessage(550, string.Format("Couldn't create directory. ({0})", sMessage));
             }

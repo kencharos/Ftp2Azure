@@ -1,6 +1,7 @@
 using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.General;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -14,7 +15,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
             if (sMessage.Length == 0)
@@ -45,7 +46,7 @@ namespace Ftp2Azure.FtpCommands
             string newDirectory = GetPath(sMessageFull);
 
             // checks whether the new directory exists
-            if (!ConnectionObject.FileSystemObject.DirectoryExists(newDirectory))
+            if (!await ConnectionObject.FileSystemObject.DirectoryExists(newDirectory))
             {
                 return GetMessage(550, string.Format("\"{0}\" no such directory.", sMessage));
             }

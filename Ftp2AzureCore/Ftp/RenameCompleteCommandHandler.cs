@@ -1,5 +1,6 @@
 using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.General;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -13,7 +14,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             if (ConnectionObject.FileToRename.Length == 0)
             {
@@ -33,12 +34,12 @@ namespace Ftp2Azure.FtpCommands
 
             // check whether the new filename exists
             // note: azure allows file&virtualdir has the same name
-            if (ConnectionObject.FileSystemObject.FileExists(sNewFileName))
+            if (await ConnectionObject.FileSystemObject.FileExists(sNewFileName))
             {
                 return GetMessage(553, string.Format("File already exists ({0}).", sMessage));
             }
 
-            if (!ConnectionObject.FileSystemObject.Move(sOldFileName, sNewFileName))
+            if (!await ConnectionObject.FileSystemObject.Move(sOldFileName, sNewFileName))
             {
                 return GetMessage(553, "Rename failed");
             }

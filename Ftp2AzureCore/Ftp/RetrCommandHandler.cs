@@ -1,6 +1,7 @@
 using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.FileSystem;
 using Ftp2Azure.General;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -17,7 +18,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
             if (sMessage == "")
@@ -25,7 +26,7 @@ namespace Ftp2Azure.FtpCommands
 
             string sFilePath = GetPath(sMessage);
 
-            if (!ConnectionObject.FileSystemObject.FileExists(sFilePath))
+            if (!await ConnectionObject.FileSystemObject.FileExists(sFilePath))
             {
                 return GetMessage(550, string.Format("File \"{0}\" doesn't exist", sMessage));
             }
@@ -39,7 +40,7 @@ namespace Ftp2Azure.FtpCommands
 
             SocketHelpers.Send(ConnectionObject.Socket, "150 Starting data transfer, please wait...\r\n", ConnectionObject.Encoding);
 
-            IFile file = ConnectionObject.FileSystemObject.OpenFile(sFilePath, false);
+            IFile file = await ConnectionObject.FileSystemObject.OpenFile(sFilePath, false);
 
             if (file == null)
             {

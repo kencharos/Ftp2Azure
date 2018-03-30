@@ -1,4 +1,5 @@
 using Ftp2Azure.Ftp;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -13,8 +14,10 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+
+        protected override async Task<string> OnProcess(string sMessage)
         {
+            await Task.CompletedTask;
             return GetMessage(200, "Ftp Server on Windows Azure, supply operations on Azure Blob Storage.");
         }
     }

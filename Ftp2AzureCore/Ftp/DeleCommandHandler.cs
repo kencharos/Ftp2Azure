@@ -1,4 +1,5 @@
 using Ftp2Azure.Ftp;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -13,7 +14,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
             if (sMessage == "")
@@ -21,12 +22,12 @@ namespace Ftp2Azure.FtpCommands
 
             string fileToDelete = GetPath(sMessage);
 
-            if (!ConnectionObject.FileSystemObject.FileExists(fileToDelete))
+            if (!await ConnectionObject.FileSystemObject.FileExists(fileToDelete))
             {
                 return GetMessage(550, string.Format("File \"{0}\" does not exist.", fileToDelete));
             }
 
-            if (!ConnectionObject.FileSystemObject.DeleteFile(fileToDelete))
+            if (!await ConnectionObject.FileSystemObject.DeleteFile(fileToDelete))
             {
                 return GetMessage(550, string.Format("Delete file \"{0}\" failed.", fileToDelete));
             }

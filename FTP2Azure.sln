@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ftp2Azure", "Ftp2Azure\Ftp2Azure.csproj", "{A6520CEB-6E55-4C9D-B581-64E432DB16D0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ftp2AzureCore", "Ftp2AzureCore\Ftp2AzureCore.csproj", "{1A770A71-40DB-46D1-8D97-6213DC4631C4}"
 EndProject
 Global
@@ -13,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A6520CEB-6E55-4C9D-B581-64E432DB16D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6520CEB-6E55-4C9D-B581-64E432DB16D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6520CEB-6E55-4C9D-B581-64E432DB16D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6520CEB-6E55-4C9D-B581-64E432DB16D0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1A770A71-40DB-46D1-8D97-6213DC4631C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A770A71-40DB-46D1-8D97-6213DC4631C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A770A71-40DB-46D1-8D97-6213DC4631C4}.Release|Any CPU.ActiveCfg = Release|Any CPU

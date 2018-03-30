@@ -1,5 +1,6 @@
 using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.General;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -13,7 +14,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
             if (sMessage == "")
@@ -22,7 +23,7 @@ namespace Ftp2Azure.FtpCommands
             string dirToRemove = GetPath(FileNameHelpers.AppendDirTag(sMessage));
 
             // check whether directory exists
-            if (!ConnectionObject.FileSystemObject.DirectoryExists(dirToRemove))
+            if (!await ConnectionObject.FileSystemObject.DirectoryExists(dirToRemove))
             {
                 return GetMessage(550, string.Format("Directory \"{0}\" does not exist", dirToRemove));
             }
@@ -34,7 +35,7 @@ namespace Ftp2Azure.FtpCommands
             }
 
             // delete directory
-            if (ConnectionObject.FileSystemObject.DeleteDirectory(dirToRemove))
+            if (await ConnectionObject.FileSystemObject.DeleteDirectory(dirToRemove))
             {
                 return GetMessage(250, string.Format("{0} successful.", Command));
             }

@@ -1,5 +1,6 @@
 using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.FileSystem;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -14,7 +15,7 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
             sMessage = sMessage.Trim();
 
@@ -24,7 +25,7 @@ namespace Ftp2Azure.FtpCommands
             string sFile = GetPath(sMessage);
 
             // check whether file exists
-            if (!ConnectionObject.FileSystemObject.FileExists(sFile))
+            if (!await ConnectionObject.FileSystemObject.FileExists(sFile))
             {
                 return GetMessage(550, string.Format("File {0} not exists. Rename directory not supported.", sMessage));
             }

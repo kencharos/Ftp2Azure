@@ -1,4 +1,5 @@
 using Ftp2Azure.Ftp;
+using System.Threading.Tasks;
 
 namespace Ftp2Azure.FtpCommands
 {
@@ -13,8 +14,9 @@ namespace Ftp2Azure.FtpCommands
         {
         }
 
-        protected override string OnProcess(string sMessage)
+        protected override async Task<string> OnProcess(string sMessage)
         {
+            await Task.CompletedTask;
             sMessage = sMessage.Trim();
             if (sMessage == "")
                 return GetMessage(501, string.Format("{0} needs a parameter", Command));
