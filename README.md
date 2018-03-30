@@ -1,5 +1,11 @@
 # FTP 2 Azure #
 
+## Changes from Originals.
+
++ Change To .NET Core 2.0
++ setting file is appsettings.json
+
+
 ## What is this? ##
 This is a tool that allows you to access as Azure Blob Storage Account as if it was an FTP Server. It's intended to be configured and run on your machine and then you use your favourite FTP Client to connect to localhost, but it can also run on a separate machine and you make your FTP Client connect to that other machine.
 Basically, what this tool does is act as a proxy between the FTP protocol and the Azure Blob Storage API.
