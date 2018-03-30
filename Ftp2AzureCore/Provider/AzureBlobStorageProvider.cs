@@ -1,5 +1,6 @@
 ﻿using Ftp2Azure.Azure;
 using Ftp2Azure.Ftp.General;
+using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Queue;
@@ -26,13 +27,15 @@ namespace Ftp2Azure.Provider
         private CloudStorageAccount _account;
         private CloudBlobClient _blobClient;
         private CloudBlobContainer _container;
+        private IConfiguration config;
 
         #endregion
 
         #region Construction
 
-        public AzureBlobStorageProvider(string containerName)
+        public AzureBlobStorageProvider(string containerName, IConfiguration config)
         {
+            this.config = config;
             Initialise(containerName);
         }
 
@@ -71,7 +74,7 @@ namespace Ftp2Azure.Provider
             }
             else
             {
-                _account = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageAccount"]);
+                _account = CloudStorageAccount.Parse(config["StorageAccount"]);
                 _blobClient = _account.CreateCloudBlobClient();
                 _blobClient.DefaultRequestOptions.ServerTimeout = new TimeSpan(0, 0, 0, 5);
             }
@@ -79,12 +82,12 @@ namespace Ftp2Azure.Provider
             _container = _blobClient.GetContainerReference(ContainerName);
             try
             {
-                _container.FetchAttributes();
+                _container.FetchAttributesAsync().Wait();
             }
             catch (StorageException)
             {
                 Console.WriteLine("Information: Create new container: {0}", ContainerName);
-                _container.Create();
+                _container.CreateAsync().Wait();
 
                 // set new container's permissions
                 // Create a permission policy to set the public access setting for the container. 
@@ -95,7 +98,7 @@ namespace Ftp2Azure.Provider
                 containerPermissions.PublicAccess = BlobContainerPublicAccessType.Off;
 
                 //Set the permission policy on the container.
-                _container.SetPermissions(containerPermissions);
+                _container.SetPermissionsAsync(containerPermissions).Wait();
             }
         }
 
@@ -108,7 +111,7 @@ namespace Ftp2Azure.Provider
             if (blob == null)
                 return null;
 
-            CloudBlobStream stream = blob.OpenWrite();
+            CloudBlobStream stream = blob.OpenWriteAsync().Result;
             return stream;
         }
 
@@ -119,7 +122,7 @@ namespace Ftp2Azure.Provider
             if (blob == null)
                 return null;
 
-            Stream stream = blob.OpenRead();
+            Stream stream = blob.OpenReadAsync().Result;
             stream.Position = 0;
 
             return stream;
@@ -172,7 +175,7 @@ namespace Ftp2Azure.Provider
             if (b != null)
             {
                 // Need AsyncCallback?
-                b.Delete();
+                b.DeleteAsync().Wait();
             }
             else
             {
@@ -200,12 +203,13 @@ namespace Ftp2Azure.Provider
             var container = _container;
             rootFix(ref container, ref dirPath);
 
-            IEnumerable<IListBlobItem> allFiles = container.ListBlobs(dirPath, useFlatBlobListing: true);
+            IEnumerable<IListBlobItem> allFiles =
+                container.ListBlobsSegmentedAsync(dirPath, true, BlobListingDetails.Metadata, 500000, null, null, null).Result.Results;
             foreach (var file in allFiles.OfType<CloudBlob>())
-                file.Delete();
+                file.DeleteIfExistsAsync().Wait();
 
             if (dirPath == "")
-                container.Delete();
+                container.DeleteAsync().Wait();
 
             return true;
         }
@@ -238,7 +242,7 @@ namespace Ftp2Azure.Provider
             {
                 var containerName = path.Remove(0, 7);
                 var container = _blobClient.GetContainerReference(containerName);
-                container.FetchAttributes();
+                container.FetchAttributesAsync().Wait();
 
                 return new AzureCloudFile
                 {
@@ -265,7 +269,8 @@ namespace Ftp2Azure.Provider
                 {
                     CloudBlobDirectory bDir = container.GetDirectoryReference(blobPath);
                     // check whether directory exists
-                    if (bDir.ListBlobs().Count() == 0)
+
+                    if (bDir.ListBlobsSegmentedAsync(null).Result.Results.Count() == 0)
                         throw new StorageException();
                     o = new AzureCloudFile
                     {
@@ -280,7 +285,7 @@ namespace Ftp2Azure.Provider
                 else
                 {
                     CloudBlob b = container.GetBlobReference(blobPath);
-                    b.FetchAttributes();
+                    b.FetchAttributesAsync().Wait();
                     o = new AzureCloudFile
                     {
                         Uri = b.Uri,
@@ -307,7 +312,7 @@ namespace Ftp2Azure.Provider
         /// <returns></returns>
         public IEnumerable<CloudBlobContainer> GetContainerListing()
         {
-            return _blobClient.ListContainers();
+            return _blobClient.ListContainersSegmentedAsync(null).Result.Results;
         }
 
         /// <summary>
@@ -320,7 +325,7 @@ namespace Ftp2Azure.Provider
             // Get the full path of directory
             string prefix = GetFullPath(path);
 
-            IEnumerable<CloudBlobDirectory> results = _blobClient.ListBlobs(prefix).OfType<CloudBlobDirectory>();
+            IEnumerable<CloudBlobDirectory> results = _blobClient.ListBlobsSegmentedAsync(prefix, null).Result.Results.OfType<CloudBlobDirectory>();
 
             return results;
         }
@@ -335,7 +340,7 @@ namespace Ftp2Azure.Provider
             // Get the full path of directory
             string prefix = GetFullPath(path);
 
-            IEnumerable<CloudBlob> results = _blobClient.ListBlobs(prefix).OfType<CloudBlob>();
+            IEnumerable<CloudBlob> results = _blobClient.ListBlobsSegmentedAsync(prefix, null).Result.Results.OfType<CloudBlob>();
 
             return results;
         }
@@ -366,12 +371,12 @@ namespace Ftp2Azure.Provider
                     "The path supplied does not exist on the storage provider", oldPath);
             }
 
-            newBlob.StartCopy(oldBlob);
+            newBlob.StartCopyAsync(oldBlob).Wait();
 
             try
             {
-                newBlob.FetchAttributes();
-                oldBlob.Delete();
+                newBlob.FetchAttributesAsync().Wait();
+                oldBlob.DeleteAsync().Wait();
                 return StorageOperationResult.Completed;
             }
             catch (StorageException)
@@ -389,18 +394,18 @@ namespace Ftp2Azure.Provider
             var container = _container;
             rootFix(ref container, ref blobPath);
             if (ContainerName == "$root")
-                container.CreateIfNotExists();
+                container.CreateIfNotExistsAsync().Wait();
 
             try
             {
                 var blob = container.GetBlockBlobReference(blobPath);
 
                 string message = "#REQUIRED: At least one file is required to be present in this folder.";
-                blob.UploadText(message);
+                blob.UploadTextAsync(message).Wait();
 
                 BlobProperties props = blob.Properties;
                 props.ContentType = "text/text";
-                blob.SetProperties();
+                blob.SetPropertiesAsync().Wait();
             }
             catch (Exception)
             {
@@ -437,13 +442,13 @@ namespace Ftp2Azure.Provider
             var container = _container;
             rootFix(ref container, ref dirPath);
 
-            if (dirPath == "") return container.Exists();
+            if (dirPath == "") return container.ExistsAsync().Result;
 
             // get reference
             CloudBlobDirectory blobDirectory = container.GetDirectoryReference(dirPath);
 
             // non-exist blobDirectory won't contain blobs
-            if (blobDirectory.ListBlobs().Count() == 0)
+            if (blobDirectory.ListBlobsSegmentedAsync(null).Result.Results.Count() == 0)
                 return false;
 
             return true;
@@ -474,7 +479,7 @@ namespace Ftp2Azure.Provider
 
             CloudBlob blob = container.GetBlobReference(blobPath);
 
-            return blob.Exists();
+            return blob.ExistsAsync().Result;
         }
 
         /// <summary>
@@ -503,7 +508,7 @@ namespace Ftp2Azure.Provider
 
             try
             {
-                foreach (var block in blob.DownloadBlockList())
+                foreach (var block in blob.DownloadBlockListAsync().Result)
                 {
                     blockList.Add(block.Name);
                 }
@@ -526,7 +531,7 @@ namespace Ftp2Azure.Provider
                     {
                         //put last block & break
                         string strBlockId = GetBlockID(blockList);
-                        blob.PutBlock(strBlockId, new System.IO.MemoryStream(buffer, 0, nRead), null);
+                        blob.PutBlockAsync(strBlockId, new System.IO.MemoryStream(buffer, 0, nRead), null).Wait();
                         blockList.Add(strBlockId);
                         break;
                     }
@@ -534,13 +539,16 @@ namespace Ftp2Azure.Provider
                     {
                         //put this block
                         string strBlockId = GetBlockID(blockList);
-                        blob.PutBlock(strBlockId, new System.IO.MemoryStream(buffer), null);
+                        blob.PutBlockAsync(strBlockId, new System.IO.MemoryStream(buffer), null).Wait();
                         blockList.Add(strBlockId);
                         nRead = 0;
                         continue;
                     }
                     nRead += actualRead;
                 }
+                var ext = Path.GetExtension(path);
+                blob.Properties.ContentType = MimeTypes.Core.MimeTypeMap.GetMimeType(ext);
+                blob.SetPropertiesAsync().Wait();
             }
             catch (StorageException)
             {
@@ -549,7 +557,7 @@ namespace Ftp2Azure.Provider
             }
 
             // put block list
-            blob.PutBlockList(blockList);
+            blob.PutBlockListAsync(blockList).Wait();
 
             return true;
         }
@@ -570,7 +578,7 @@ namespace Ftp2Azure.Provider
             CloudQueue queue = queueClient.GetQueueReference("ftp2azure-queue");
 
             // Create the queue if it doesn't already exist
-            queue.CreateIfNotExists();
+            queue.CreateIfNotExistsAsync().Wait();
 
             // Get the new blob's URI
             // remove the first '/' char
@@ -579,7 +587,7 @@ namespace Ftp2Azure.Provider
 
             // Create a message and add it into the queue
             CloudQueueMessage message = new CloudQueueMessage(string.Format("User uploaded blob: {0}", blob.Uri));
-            queue.AddMessage(message);
+            queue.AddMessageAsync(message).Wait();
         }
 
         /// <summary>
@@ -598,11 +606,11 @@ namespace Ftp2Azure.Provider
 
             CloudBlob blob = container.GetBlobReference(blobPath);
 
-            blob.FetchAttributes();
+            blob.FetchAttributesAsync().Wait();
 
             blob.Properties.ContentMD5 = md5Value;
 
-            blob.SetProperties();
+            blob.SetPropertiesAsync().Wait();
         }
 
         #endregion
@@ -657,7 +665,7 @@ namespace Ftp2Azure.Provider
             string fileBlobPath = filePath.ToAzurePath();
             CloudBlob blob = _container.GetBlobReference(fileBlobPath);
 
-            blob.FetchAttributes();
+            blob.FetchAttributesAsync().Wait();
 
             Console.WriteLine("GetMd5#" + blob.Properties.ContentMD5);
         }

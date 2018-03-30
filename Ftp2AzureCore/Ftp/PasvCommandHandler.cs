@@ -1,5 +1,6 @@
 using Ftp2Azure.Ftp;
 using Ftp2Azure.General;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Configuration;
 using System.Net;
@@ -14,13 +15,15 @@ namespace Ftp2Azure.FtpCommands
     internal class PasvCommandHandler : FtpCommandHandler
     {
         private int m_nPort;
+        private IConfiguration config;
 
         // This command maybe won't work if the ftp server is deployed locally <= firewall
-        public PasvCommandHandler(FtpConnectionObject connectionObject)
+        public PasvCommandHandler(FtpConnectionObject connectionObject, IConfiguration config)
             : base("PASV", connectionObject)
         {
             // set passive listen port
-            m_nPort = int.Parse(ConfigurationManager.AppSettings["FtpPasvPort"]);
+            this.config = config;
+            m_nPort = int.Parse(config["FtpPasvPort"]);
         }
 
         protected override string OnProcess(string sMessage)

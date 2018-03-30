@@ -1,6 +1,7 @@
 ﻿using Ftp2Azure.Azure;
 using Ftp2Azure.Ftp;
 using Ftp2Azure.Provider;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,14 @@ namespace Ftp2Azure
     {
         public static void Main(string[] args)
         {
-            var _server = new FtpServer(new AzureFileSystemFactory());
+
+            IConfiguration conf = new ConfigurationBuilder()
+                .AddJsonFile($"appsettings.json")
+                .AddJsonFile($"appsettings.local.json", optional: true)
+                .Build();
+            StorageProviderConfiguration.Init(conf);
+
+            var _server = new FtpServer(new AzureFileSystemFactory(conf), conf);
 
             _server.NewConnection += nId =>
                 Console.WriteLine("Connection: {0} accepted", nId);

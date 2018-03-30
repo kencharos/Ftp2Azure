@@ -1,6 +1,7 @@
 using Ftp2Azure.Ftp.FileSystem;
 using Ftp2Azure.General;
 using Ftp2Azure.Provider;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -25,7 +26,7 @@ namespace Ftp2Azure.Ftp
         private Thread m_theMonitorThread;
         private static DateTime m_lastActiveTime; // shared between threads
         private int m_maxIdleSeconds;
-
+        private IConfiguration config;
         #endregion
 
         #region Events
@@ -42,10 +43,11 @@ namespace Ftp2Azure.Ftp
 
         #region Construction
 
-        public FtpSocketHandler(IFileSystemClassFactory fileSystemClassFactory, int nId)
+        public FtpSocketHandler(IFileSystemClassFactory fileSystemClassFactory, int nId, IConfiguration config)
         {
             m_nId = nId;
             m_fileSystemClassFactory = fileSystemClassFactory;
+            this.config = config;
         }
 
         #endregion
@@ -60,7 +62,7 @@ namespace Ftp2Azure.Ftp
 
             m_lastActiveTime = DateTime.Now;
 
-            m_theCommands = new FtpConnectionObject(m_fileSystemClassFactory, m_nId, socket);
+            m_theCommands = new FtpConnectionObject(m_fileSystemClassFactory, m_nId, socket, config);
             m_theCommands.Encoding = encoding;
             m_theThread = new Thread(ThreadRun);
             m_theThread.Start();

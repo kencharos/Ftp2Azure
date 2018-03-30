@@ -1,5 +1,6 @@
 using Ftp2Azure.Ftp.FileSystem;
 using Ftp2Azure.General;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections;
 using System.Configuration;
@@ -25,6 +26,7 @@ namespace Ftp2Azure.Ftp
         private bool m_started = false;
         private Encoding m_encoding;
         private int m_maxClients;
+        private IConfiguration config;
 
         #endregion
 
@@ -43,10 +45,11 @@ namespace Ftp2Azure.Ftp
 
         #region Construction
 
-        public FtpServer(IFileSystemClassFactory fileSystemClassFactory)
+        public FtpServer(IFileSystemClassFactory fileSystemClassFactory, IConfiguration config)
         {
             m_apConnections = new ArrayList();
             m_fileSystemClassFactory = fileSystemClassFactory;
+            this.config = config;
         }
 
         ~FtpServer()
@@ -166,7 +169,7 @@ namespace Ftp2Azure.Ftp
         /// </summary>
         private void InitialiseConnectionEncoding()
         {
-            string encoding = ConfigurationManager.AppSettings["ConnectionEncoding"];
+            string encoding = config["ConnectionEncoding"];
             switch (encoding)
             {
                 case "ASCII":
@@ -187,7 +190,7 @@ namespace Ftp2Azure.Ftp
         /// </summary>
         private void InitialiseMaxClients()
         {
-            string maxClients = ConfigurationManager.AppSettings["MaxClients"];
+            string maxClients = config["MaxClients"];
 
             int iMaxClients = 5;
 
@@ -223,7 +226,7 @@ namespace Ftp2Azure.Ftp
 
         private void InitialiseSocketHandler(TcpClient socket)
         {
-            var handler = new FtpSocketHandler(m_fileSystemClassFactory, m_nId);
+            var handler = new FtpSocketHandler(m_fileSystemClassFactory, m_nId, config);
 
             // get encoding for the socket connection
 

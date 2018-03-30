@@ -1,5 +1,6 @@
 ﻿using Ftp2Azure.Ftp.FileSystem;
 using Ftp2Azure.Provider;
+using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.Collections.Generic;
 using System.IO;
@@ -13,11 +14,11 @@ namespace Ftp2Azure.Azure
         private string _containerName;
 
         // Constructor
-        public AzureFileSystem(string containerName)
+        public AzureFileSystem(string containerName, IConfiguration config)
         {
             // Set container name (if none specified, specify the development container default)
             _containerName = !string.IsNullOrEmpty(containerName) ? containerName : "DevelopmentContainer";
-            _provider = new AzureBlobStorageProvider(_containerName);
+            _provider = new AzureBlobStorageProvider(_containerName, config);
         }
 
         #region Implementation of IFileSystem

@@ -2,6 +2,7 @@ using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.FileSystem;
 using Ftp2Azure.FtpCommands;
 using Ftp2Azure.General;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections;
 using System.Net.Sockets;
@@ -20,13 +21,13 @@ namespace Ftp2Azure.Ftp
         private readonly Hashtable m_theCommandHashTable;
         private bool isLogged;
         private static bool m_useDataSocket;
-
+        private IConfiguration config;
         #endregion
 
         #region Properties
 
         public bool DataSocketOpen
-        { 
+        {
             get { return m_useDataSocket; }
         }
 
@@ -34,13 +35,14 @@ namespace Ftp2Azure.Ftp
 
         #region Construction
 
-        public FtpConnectionObject(IFileSystemClassFactory fileSystemClassFactory, int nId, TcpClient socket)
+        public FtpConnectionObject(IFileSystemClassFactory fileSystemClassFactory, int nId, TcpClient socket, IConfiguration config)
             : base(nId, socket)
         {
             m_theCommandHashTable = new Hashtable();
             m_fileSystemClassFactory = fileSystemClassFactory;
             isLogged = false;
             m_useDataSocket = false;
+            this.config = config;
             LoadCommands();
         }
 
@@ -85,7 +87,7 @@ namespace Ftp2Azure.Ftp
             AddCommand(new NlstCommandHandler(this));
             AddCommand(new NoopCommandHandler(this));
             AddCommand(new PasswordCommandHandler(this));
-            AddCommand(new PasvCommandHandler(this));
+            AddCommand(new PasvCommandHandler(this, config));
             AddCommand(new PortCommandHandler(this));
             AddCommand(new PwdCommandHandler(this));
             AddCommand(new QuitCommandHandler(this));
@@ -104,7 +106,7 @@ namespace Ftp2Azure.Ftp
             AddCommand(new SystemCommandHandler(this));
             AddCommand(new TypeCommandHandler(this));
             AddCommand(new UserCommandHandler(this));
-            
+
             #endregion
 
             #region Obsolete commands

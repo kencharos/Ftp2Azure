@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Configuration;
 
 namespace Ftp2Azure.Provider
@@ -9,13 +10,23 @@ namespace Ftp2Azure.Provider
         Debug
     }
 
-    public class StorageProviderConfiguration
+    // TODO singleton instance;
+    public static class StorageProviderConfiguration
     {
+        static IConfiguration _conf;
+
+
+        public static void Init(IConfiguration conf)
+        {
+            _conf = conf;
+        }
+
+
         public static string FtpAccount
         {
             get
             {
-                return ConfigurationManager.AppSettings["FtpAccount"];
+                return _conf["FtpAccount"];
             }
         }
 
@@ -23,7 +34,7 @@ namespace Ftp2Azure.Provider
         {
             get
             {
-                return (Modes)Enum.Parse(typeof(Provider.Modes), ConfigurationManager.AppSettings["Mode"]);
+                return (Modes)Enum.Parse(typeof(Provider.Modes), _conf["Mode"]);
             }
         }
 
@@ -31,7 +42,7 @@ namespace Ftp2Azure.Provider
         {
             get
             {
-                return bool.Parse(ConfigurationManager.AppSettings["QueueNotification"]);
+                return bool.Parse(_conf["QueueNotification"]);
             }
         }
 
@@ -39,7 +50,7 @@ namespace Ftp2Azure.Provider
         {
             get
             {
-                return int.Parse(ConfigurationManager.AppSettings["MaxIdleSeconds"]);
+                return int.Parse(_conf["MaxIdleSeconds"]);
             }
         }
 
@@ -47,7 +58,7 @@ namespace Ftp2Azure.Provider
         {
             get
             {
-                return ConfigurationManager.AppSettings["FtpServerHost"];
+                return _conf["FtpServerHost"];
             }
         }
     }

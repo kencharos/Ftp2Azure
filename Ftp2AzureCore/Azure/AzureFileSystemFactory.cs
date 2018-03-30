@@ -1,5 +1,6 @@
 ﻿using Ftp2Azure.Ftp;
 using Ftp2Azure.Ftp.FileSystem;
+using Microsoft.Extensions.Configuration;
 
 namespace Ftp2Azure.Azure
 {
@@ -7,13 +8,15 @@ namespace Ftp2Azure.Azure
     {
         #region Member variables
         private AccountManager m_accountManager;
+        private IConfiguration config;
         #endregion
 
         #region Construction
-        public AzureFileSystemFactory()
+        public AzureFileSystemFactory(IConfiguration config)
         {
             m_accountManager = new AccountManager();
             m_accountManager.LoadConfigration();
+            this.config = config;
         }
         #endregion
 
@@ -28,7 +31,7 @@ namespace Ftp2Azure.Azure
                 return null;
 
             string containerName = sUser;
-            var system = new AzureFileSystem(containerName);
+            var system = new AzureFileSystem(containerName, config);
 
             return system;
         }
