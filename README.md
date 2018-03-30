@@ -4,6 +4,38 @@
 
 + Change To .NET Core 2.0
 + setting file is appsettings.json
++ Dockerfile for linux with dotnetcore
+
+### build docker image
+
+To build app in your machine.
+(TODO, build in dotnetcore sdk docker image)
+
+```
+cd Ftp2AzureCore
+dotnet publish -c release --runtime liniux-x64
+```
+
+To build image
+
+```
+cd ..
+docker -t example/ftp2azure:tag .
+```
+
+To Run docker image.
+
+```
+docker run -p 21:21 -p 59860:59860 -b example/ftp2azure:tag
+```
+
+if override appsettings, set env  with -e options
+
+```
+
+```
+docker run -p 21:21 -p 59860:59860 -e "StorageAccount=Endpoint=,,,," -b example/ftp2azure:tag
+```
 
 
 ## What is this? ##

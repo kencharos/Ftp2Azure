@@ -118,6 +118,8 @@ namespace Ftp2Azure.General
             try
             {
                 listener = new TcpListener(endPoint);
+                // Explict reuse address for running docker.
+                listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             }
             catch (SocketException)
             {
