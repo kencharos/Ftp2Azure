@@ -3,8 +3,10 @@
 ## Changes from Originals.
 
 + Change To .NET Core 2.0
-+ setting file is appsettings.json
-+ Dockerfile for linux with dotnetcore
++ newest Azure Storage SDK 
+    + revise ftpserver for using Task, async/await.
++ configuration file changed to appsettings.json
++ Dockerfile for linux with dotnetcore.
 
 ### build docker image
 
@@ -29,9 +31,7 @@ To Run docker image.
 docker run -p 21:21 -p 59860:59860 -b example/ftp2azure:tag
 ```
 
-if override appsettings, set env  with -e options
-
-```
+if override appsettings, set env  with -e options.
 
 ```
 docker run -p 21:21 -p 59860:59860 -e "StorageAccount=Endpoint=,,,," -b example/ftp2azure:tag
